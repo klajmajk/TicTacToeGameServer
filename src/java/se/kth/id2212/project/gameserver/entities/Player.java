@@ -10,6 +10,15 @@ package se.kth.id2212.project.gameserver.entities;
  *
  * @author Adam
  */
-class Player {
+public class Player {
+    String GCMId;
+
+    public Player(String GCMId) {
+        this.GCMId = GCMId;
+    }
+
+    public String getGCMId() {
+        return GCMId;
+    }
     
 }

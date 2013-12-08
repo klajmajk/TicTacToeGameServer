@@ -42,10 +42,19 @@
 
 package se.kth.id2212.project.gameserver;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Singleton;
 import se.kth.id2212.project.gameserver.entities.Board;
 import se.kth.id2212.project.gameserver.entities.GameSession;
 import se.kth.id2212.project.gameserver.entities.Move;
+import se.kth.id2212.project.gameserver.entities.Player;
 
 /** Singleton session bean used to store the name parameter for "/helloWorld" resource
  *
@@ -53,7 +62,7 @@ import se.kth.id2212.project.gameserver.entities.Move;
  */
 @Singleton
 public class GameBean {
-    
+    private Player player;
     private GameSession gameSession;
 
     // name field
@@ -79,6 +88,33 @@ public class GameBean {
     public void joinGame(GameSession game) {
         System.out.println("Join game"+ game);
     }
+    
+    public void sendGMC(){
+        try {
+            URL url = new URL("https://android.googleapis.com/gcm/send");
+            
+            
+            HttpURLConnection httpConn= (HttpURLConnection) url.openConnection();
+            httpConn.setDoOutput(true);
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Content-Type", "application/json");
+            httpConn.setRequestProperty("Authorization", "key=AIzaSyCIjwBvbJo6iWDZ5dJwuhT6_c9KrG8sDU0");
+            System.out.println(httpConn);
+            
+            OutputStream os = httpConn.getOutputStream();         
+            BufferedWriter osw = new BufferedWriter(new OutputStreamWriter(os));
+            
+            osw.write("{ \"data\": {\n" +
+                "    \"refresh\": \"true\",\n" +
+                "  },\"registration_ids\": [ \""+ player.getGCMId()+"\" ] }");
+            osw.flush();
+            osw.close();
+            
+            System.out.println(httpConn.getResponseCode());
+        } catch (IOException ex) {
+            Logger.getLogger(GameBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
    
 
@@ -88,6 +124,10 @@ public class GameBean {
 
     public Board getBoard() {
         return gameSession.getBoard();
+    }    
+
+    public void registerPlayer(Player player) {
+        this.player = player;
     }
  
 }
