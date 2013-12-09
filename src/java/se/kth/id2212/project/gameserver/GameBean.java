@@ -48,6 +48,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Singleton;
@@ -63,7 +65,9 @@ import se.kth.id2212.project.gameserver.entities.Player;
 @Singleton
 public class GameBean {
     private Player player;
-    private GameSession gameSession;
+    private List<GameSession> gameSessions;
+    
+    
 
     // name field
     private String name = "World";
@@ -76,16 +80,21 @@ public class GameBean {
         this.name = name;
     }
 
-    public String getGamesList() {
+    public List<GameSession> getGamesList() {
         System.out.println("Get game list");
-        return "something";
+        return gameSessions;
     }
 
     public void startNewGame(GameSession game) {
+        if(gameSessions==null){
+            gameSessions = new ArrayList<GameSession>();
+        }
         System.out.println("Start new game"+ game);
+        gameSessions.add(game);
     }
 
-    public void joinGame(GameSession game) {
+    public void joinGame(int gameId) {
+        GameSession game = findSessionById(gameId);
         System.out.println("Join game"+ game);
     }
     
@@ -118,13 +127,22 @@ public class GameBean {
 
    
 
-    public void handleMove(Move move) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Board handleMove(Move move) {
+        move.doMove();
+        return getBoard(move.getGame().getId());
     }
 
-    public Board getBoard() {
+    public Board getBoard(int gameSessionId) {
+        GameSession gameSession = findSessionById(gameSessionId);
         return gameSession.getBoard();
     }    
+    
+    private GameSession findSessionById(int id){
+        for (GameSession gameSession : gameSessions) {
+            if(gameSession.getId() == id) return gameSession;
+        }
+        return null;
+    }
 
     public void registerPlayer(Player player) {
         this.player = player;

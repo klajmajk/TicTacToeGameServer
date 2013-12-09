@@ -39,12 +39,8 @@ public class MoveResource {
      * Retrieves representation of an instance of se.kth.id2212.project.gameserver.MoveResource
      * @return an instance of java.lang.String
      */
-    @GET
-    @Produces("application/plain")
-    public String getBoard() {
-        //TODO return proper representation object
-        return Serializer.getBoard(gameBean.getBoard());
-    }
+    
+   
 
     /**
      * PUT method for updating or creating an instance of MoveResource
@@ -53,8 +49,10 @@ public class MoveResource {
      */
     @PUT
     @Consumes("application/plain")
-    public void putMove(String content) {
+    @Path("putMove")
+    
+    public String putMove(String content) {
         Move move = Parser.getMove(content);
-        gameBean.handleMove(move);
+        return Serializer.getBoard(gameBean.handleMove(move));
     }
 }

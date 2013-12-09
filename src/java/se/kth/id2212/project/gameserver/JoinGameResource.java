@@ -43,7 +43,7 @@ public class JoinGameResource {
     @PUT
     @Consumes("text/plain")
     public void putJoinGame(String content) {
-        GameSession game = Parser.getGame(content);
-        gameBean.joinGame(game);
+        int gameId = Parser.getGameId(content);
+        gameBean.joinGame(gameId);
     }
 }

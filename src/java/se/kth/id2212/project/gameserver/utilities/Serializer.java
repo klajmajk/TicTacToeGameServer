@@ -6,7 +6,10 @@
 
 package se.kth.id2212.project.gameserver.utilities;
 
+import com.google.gson.Gson;
+import java.util.List;
 import se.kth.id2212.project.gameserver.entities.Board;
+import se.kth.id2212.project.gameserver.entities.GameSession;
 
 /**
  *
@@ -15,7 +18,19 @@ import se.kth.id2212.project.gameserver.entities.Board;
 public class Serializer {
 
     public static String getBoard(Board board) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+               
+        return serialize(board);
     }
+
+    public static String getGamesList(List<GameSession> gamesList) {        
+        return serialize(gamesList);
+    }
+    
+    private static String serialize(Object o){
+        Gson gson = new Gson();
+	String json = gson.toJson(o);
+        return json;
+    }
+
     
 }

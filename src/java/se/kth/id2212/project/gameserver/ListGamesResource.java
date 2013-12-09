@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import se.kth.id2212.project.gameserver.utilities.Serializer;
 
 /**
  * REST Web Service
@@ -39,7 +40,7 @@ public class ListGamesResource {
     @Produces("text/plain")
     public String getGamesList() {
         //TODO return proper representation object
-        return gameBean.getGamesList();
+        return Serializer.getGamesList(gameBean.getGamesList());
     }
 
     

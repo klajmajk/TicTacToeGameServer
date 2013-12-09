@@ -6,6 +6,8 @@
 
 package se.kth.id2212.project.gameserver.entities;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author Adam

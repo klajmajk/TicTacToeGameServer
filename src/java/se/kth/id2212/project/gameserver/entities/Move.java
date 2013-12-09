@@ -13,6 +13,7 @@ package se.kth.id2212.project.gameserver.entities;
 public class Move {
     private Player player;
     private int x, y;
+    private GameSession game;
 
     public Move(Player player, int x, int y) {
         this.player = player;
@@ -20,17 +21,15 @@ public class Move {
         this.y = y;
     }
 
-    public Player getPlayer() {
-        return player;
+    public void doMove(){
+        game.move(player, x, y);
     }
 
-    public int getX() {
-        return x;
+    public GameSession getGame() {
+        return game;
     }
-
-    public int getY() {
-        return y;
-    }
+    
+    
     
     
 }

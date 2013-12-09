@@ -41,7 +41,7 @@ public class NewGameResource {
     @PUT
     @Consumes("text/plain")
     public void putNewGame(String content) {
-        GameSession game = Parser.getGame(content);
+        GameSession game = Parser.getNewGame(content);
         gameBean.startNewGame(game);
     }
 }
