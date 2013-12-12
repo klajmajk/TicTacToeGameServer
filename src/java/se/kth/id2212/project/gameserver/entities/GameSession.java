@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Adam
  */
  public class GameSession {
-     private final int id;
+     private int id;
      private final String name;
      private final Player creator;
      private Player joined;
@@ -32,6 +32,7 @@ import com.google.gson.annotations.SerializedName;
         this.joined=null;
         
     }
+    
 
     public void setJoined(Player joined) {
         this.joined = joined;
@@ -75,6 +76,13 @@ import com.google.gson.annotations.SerializedName;
     public Player getJoined() {
         return joined;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    
+    
     
     
     
