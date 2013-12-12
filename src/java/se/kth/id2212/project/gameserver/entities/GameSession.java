@@ -5,7 +5,7 @@
  */
 package se.kth.id2212.project.gameserver.entities;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import com.google.gson.annotations.SerializedName;
 
 /**
  *
@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
         this.creatorScore = 0;
         this.joinedScore = 0;
         this.whoseTurn = BoardMoves.X;
+        this.joined=null;
+        
     }
 
     public void setJoined(Player joined) {
@@ -69,6 +71,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     public String getName() {
         return name;
     }
+
+    public Player getJoined() {
+        return joined;
+    }
+    
     
     
     

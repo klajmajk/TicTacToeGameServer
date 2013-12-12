@@ -99,9 +99,9 @@ public class GameBean {
     }
     
     public void sendGMC(){
+        
         try {
-            URL url = new URL("https://android.googleapis.com/gcm/send");
-            
+            URL url = new URL("https://android.googleapis.com/gcm/send");            
             
             HttpURLConnection httpConn= (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
