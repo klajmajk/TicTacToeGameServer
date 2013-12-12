@@ -88,7 +88,8 @@ public class GameBean {
     public void startNewGame(GameSession game) {
         if(gameSessions==null){
             gameSessions = new ArrayList<GameSession>();
-        }
+        }        
+        game.setId(gameSessions.size());
         System.out.println("Start new game"+ game);
         gameSessions.add(game);
     }
