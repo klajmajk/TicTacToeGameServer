@@ -39,35 +39,26 @@
  * 
  * Portions Copyrighted 2008 Sun Microsystems, Inc.
  */
-
 package se.kth.id2212.project.gameserver;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.Singleton;
 import se.kth.id2212.project.gameserver.entities.Board;
 import se.kth.id2212.project.gameserver.entities.GameSession;
 import se.kth.id2212.project.gameserver.entities.Move;
-import se.kth.id2212.project.gameserver.entities.Player;
+import se.kth.id2212.project.gameserver.utilities.GCMHandler;
 
-/** Singleton session bean used to store the name parameter for "/helloWorld" resource
+/**
+ * Singleton session bean used to store the name parameter for "/helloWorld"
+ * resource
  *
  * @author mkuchtiak
  */
 @Singleton
 public class GameBean {
-    private Player player;
+
     private List<GameSession> gameSessions;
-    
-    
 
     // name field
     private String name = "World";
@@ -85,68 +76,50 @@ public class GameBean {
         return gameSessions;
     }
 
-    public void startNewGame(GameSession game) {
-        if(gameSessions==null){
+    public GameSession startNewGame(GameSession game) {
+        if (gameSessions == null) {
             gameSessions = new ArrayList<GameSession>();
-        }        
-        game.setId(gameSessions.size());
-        System.out.println("Start new game"+ game);
-        gameSessions.add(game);
-    }
-
-    public void joinGame(int gameId) {
-        GameSession game = findSessionById(gameId);
-        System.out.println("Join game"+ game);
-    }
-    
-    public void sendGMC(){
-        
-        try {
-            URL url = new URL("https://android.googleapis.com/gcm/send");            
-            
-            HttpURLConnection httpConn= (HttpURLConnection) url.openConnection();
-            httpConn.setDoOutput(true);
-            httpConn.setRequestMethod("POST");
-            httpConn.setRequestProperty("Content-Type", "application/json");
-            httpConn.setRequestProperty("Authorization", "key=AIzaSyCIjwBvbJo6iWDZ5dJwuhT6_c9KrG8sDU0");
-            System.out.println(httpConn);
-            
-            OutputStream os = httpConn.getOutputStream();         
-            BufferedWriter osw = new BufferedWriter(new OutputStreamWriter(os));
-            
-            osw.write("{ \"data\": {\n" +
-                "    \"refresh\": \"true\",\n" +
-                "  },\"registration_ids\": [ \""+ player.getGCMId()+"\" ] }");
-            osw.flush();
-            osw.close();
-            
-            System.out.println(httpConn.getResponseCode());
-        } catch (IOException ex) {
-            Logger.getLogger(GameBean.class.getName()).log(Level.SEVERE, null, ex);
         }
+        game.setId(gameSessions.size());
+        System.out.println("Start new game" + game);
+        gameSessions.add(game);
+        return game;
     }
 
-   
+    public void joinGame(GameSession game) {
+        System.out.println("Join game" + game);
+        findSessionById(game.getId()).setJoined(game.getJoined());
+        GCMHandler.sendGMC(game.getCreator());
+        GCMHandler.sendGMC(game.getJoined());
+    }
 
     public Board handleMove(Move move) {
-        move.doMove();
+        move.doMove();        
         return getBoard(move.getGame().getId());
     }
 
     public Board getBoard(int gameSessionId) {
         GameSession gameSession = findSessionById(gameSessionId);
         return gameSession.getBoard();
-    }    
-    
-    private GameSession findSessionById(int id){
+    }
+
+    private GameSession findSessionById(int id) {
         for (GameSession gameSession : gameSessions) {
-            if(gameSession.getId() == id) return gameSession;
+            if (gameSession.getId() == id) {
+                return gameSession;
+            }
         }
         return null;
     }
 
-    public void registerPlayer(Player player) {
-        this.player = player;
+    
+
+    public GameSession refreshGame(GameSession gameReceived) {
+        
+
+        GameSession game = findSessionById(gameReceived.getId());
+        game.setBoard(gameReceived.getBoard());
+        return game;
     }
- 
+
 }
