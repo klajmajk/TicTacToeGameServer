@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import java.util.List;
 import se.kth.id2212.project.gameserver.entities.Board;
 import se.kth.id2212.project.gameserver.entities.GameSession;
+import se.kth.id2212.project.gameserver.network.Response;
 
 /**
  *
@@ -30,6 +31,15 @@ public class Serializer {
         Gson gson = new Gson();
 	String json = gson.toJson(o);
         return json;
+    }
+
+    public static String getGameSession(GameSession game) {
+        return serialize(game);
+    }
+
+    public static String getResponse(Response resp) {
+        
+        return serialize(resp);
     }
 
     

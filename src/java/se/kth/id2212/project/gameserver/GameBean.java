@@ -46,7 +46,10 @@ import java.util.List;
 import javax.ejb.Singleton;
 import se.kth.id2212.project.gameserver.entities.Board;
 import se.kth.id2212.project.gameserver.entities.GameSession;
-import se.kth.id2212.project.gameserver.entities.Move;
+import se.kth.id2212.project.gameserver.entities.Player;
+import se.kth.id2212.project.gameserver.network.Request;
+import se.kth.id2212.project.gameserver.network.RequestHandler;
+import se.kth.id2212.project.gameserver.network.Response;
 import se.kth.id2212.project.gameserver.utilities.GCMHandler;
 
 /**
@@ -59,51 +62,39 @@ import se.kth.id2212.project.gameserver.utilities.GCMHandler;
 public class GameBean {
 
     private List<GameSession> gameSessions;
+    private RequestHandler reqHandler;
 
-    // name field
-    private String name = "World";
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public List<GameSession> getGamesList() {
         System.out.println("Get game list");
         return gameSessions;
     }
 
-    public GameSession startNewGame(GameSession game) {
+    public GameSession startNewGame(String name, Player player) {
         if (gameSessions == null) {
             gameSessions = new ArrayList<GameSession>();
         }
-        game.setId(gameSessions.size());
+        GameSession game = new  GameSession(gameSessions.size(), name, player);
         System.out.println("Start new game" + game);
         gameSessions.add(game);
         return game;
     }
+    
 
-    public void joinGame(GameSession game) {
+    public void joinGame(int gameId, Player player) {
+        GameSession game = getGameSessionById(gameId);
         System.out.println("Join game" + game);
-        findSessionById(game.getId()).setJoined(game.getJoined());
+        game.setJoined(player);
         GCMHandler.sendGMC(game.getCreator());
-        GCMHandler.sendGMC(game.getJoined());
+    }
+    public void handleMove(int gameId, int x, int y, String playerId){
+        getGameSessionById(gameId).move(new Player(playerId), x, y);
     }
 
-    public Board handleMove(Move move) {
-        move.doMove();        
-        return getBoard(move.getGame().getId());
-    }
+    
 
-    public Board getBoard(int gameSessionId) {
-        GameSession gameSession = findSessionById(gameSessionId);
-        return gameSession.getBoard();
-    }
-
-    private GameSession findSessionById(int id) {
+    
+    public GameSession getGameSessionById(int id) {
         for (GameSession gameSession : gameSessions) {
             if (gameSession.getId() == id) {
                 return gameSession;
@@ -114,12 +105,24 @@ public class GameBean {
 
     
 
-    public GameSession refreshGame(GameSession gameReceived) {
-        
+    public GameSession refreshGame(int gameId) {      
 
-        GameSession game = findSessionById(gameReceived.getId());
-        game.setBoard(gameReceived.getBoard());
+        GameSession game = getGameSessionById(gameId);
         return game;
     }
+
+    public Response handleRequest(Request req) {
+        if (reqHandler == null) {
+            reqHandler = new RequestHandler(this);
+        }
+        return reqHandler.handleRequest(req);
+    }
+
+    public void dropGame(int gameId) {
+        GameSession game = getGameSessionById(gameId);
+        gameSessions.remove(game);
+    }
+
+    
 
 }

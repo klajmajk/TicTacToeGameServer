@@ -10,26 +10,21 @@ package se.kth.id2212.project.gameserver.entities;
  *
  * @author Adam
  */
-public class Move {
-    private Player player;
-    private int x, y;
-    private GameSession game;
+public class Point {
+    int x, y;
 
-    public Move(Player player, int x, int y) {
-        this.player = player;
+    public Point(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public void doMove(){
-        game.move(player, x, y);
+    public int getX() {
+        return x;
     }
 
-    public GameSession getGame() {
-        return game;
+    public int getY() {
+        return y;
     }
-    
-    
     
     
 }
