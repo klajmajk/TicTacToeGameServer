@@ -84,11 +84,13 @@ public class GameBean {
     public void joinGame(int gameId, Player player) {
         GameSession game = getGameSessionById(gameId);
         System.out.println("Join game" + game);
+        //TODO if game destroyed in meantime null pointer exception here
         game.setJoined(player);
         GCMHandler.sendGMC(game.getCreator());
     }
     public void handleMove(int gameId, int x, int y, String playerId){
-        getGameSessionById(gameId).move(new Player(playerId), x, y);
+        getGameSessionById(gameId).move(new Player(playerId), x, y);        
+        GCMHandler.sendGMC(getGameSessionById(gameId).getPlayerWhoseTurn());
     }
 
     
