@@ -101,10 +101,12 @@ public class Board {
         return GameStatus.PLAYING;
     }
 
-    private GameStatus checkDraw() {
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].equals(BoardMoves.EMPTY)) {
-                return GameStatus.PLAYING;
+   private GameStatus checkDraw() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (array[i][j].equals(BoardMoves.EMPTY)) {
+                    return GameStatus.PLAYING;
+                }
             }
         }
         return GameStatus.DRAW;

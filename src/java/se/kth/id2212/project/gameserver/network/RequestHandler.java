@@ -44,6 +44,9 @@ public class RequestHandler {
             case DROP_GAME:
                 resp = handleDropGame(req);
                 break;
+            case NEW_BOARD:
+                resp = handleNewBoard(req);
+                break;
                 
                 
 
@@ -78,5 +81,9 @@ public class RequestHandler {
     private Response handleDropGame(Request req) {
         gameBean.dropGame(req.getGameId());
         return new Response(ResponseStatus.OK);
+    }
+
+    private Response handleNewBoard(Request req) {        
+        return new Response(ResponseStatus.GAME_SESSION, gameBean.newBoard(req.getGameId(), req.getPlayerId()));
     }
 }

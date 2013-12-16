@@ -64,7 +64,6 @@ public class GameBean {
     private List<GameSession> gameSessions;
     private RequestHandler reqHandler;
 
-
     public List<GameSession> getGamesList() {
         System.out.println("Get game list");
         return gameSessions;
@@ -74,12 +73,11 @@ public class GameBean {
         if (gameSessions == null) {
             gameSessions = new ArrayList<GameSession>();
         }
-        GameSession game = new  GameSession(gameSessions.size(), name, player);
+        GameSession game = new GameSession(gameSessions.size(), name, player);
         System.out.println("Start new game" + game);
         gameSessions.add(game);
         return game;
     }
-    
 
     public void joinGame(int gameId, Player player) {
         GameSession game = getGameSessionById(gameId);
@@ -88,14 +86,12 @@ public class GameBean {
         game.setJoined(player);
         GCMHandler.sendGMC(game.getCreator());
     }
-    public void handleMove(int gameId, int x, int y, String playerId){
-        getGameSessionById(gameId).move(new Player(playerId), x, y);        
+
+    public void handleMove(int gameId, int x, int y, String playerId) {
+        getGameSessionById(gameId).move(new Player(playerId), x, y);
         GCMHandler.sendGMC(getGameSessionById(gameId).getPlayerWhoseTurn());
     }
 
-    
-
-    
     public GameSession getGameSessionById(int id) {
         for (GameSession gameSession : gameSessions) {
             if (gameSession.getId() == id) {
@@ -105,9 +101,7 @@ public class GameBean {
         return null;
     }
 
-    
-
-    public GameSession refreshGame(int gameId) {      
+    public GameSession refreshGame(int gameId) {
 
         GameSession game = getGameSessionById(gameId);
         return game;
@@ -125,6 +119,13 @@ public class GameBean {
         gameSessions.remove(game);
     }
 
-    
+    public GameSession newBoard(int gameId, String playerId) {
+        GameSession game = getGameSessionById(gameId);
+        game.newBoard();
+        GCMHandler.sendGMC(game.getJoined());
+        GCMHandler.sendGMC(game.getCreator());
+
+        return game;
+    }
 
 }

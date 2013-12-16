@@ -42,7 +42,7 @@ public class GameSession {
     }
 
     public void move(Player p, int x, int y) {
-        System.out.println("Handeling move "+ playerWhoseTurn +" "+ p );
+        System.out.println("Handeling move " + playerWhoseTurn + " " + p);
         if (playerWhoseTurn.equals(p)) {
             if (creator.equals(p)) {
                 board.set(x, y, BoardMoves.X);
@@ -50,12 +50,12 @@ public class GameSession {
                 whoseTurn = BoardMoves.O;
                 playerWhoseTurn = joined;
                 System.out.println("Handeling move X");
-            }else{
+            } else {
                 board.set(x, y, BoardMoves.O);
                 checkGameState();
                 whoseTurn = BoardMoves.X;
                 playerWhoseTurn = creator;
-                
+
                 System.out.println("Handeling move O");
             }
         }
@@ -65,11 +65,18 @@ public class GameSession {
     private void checkGameState() {
         if (board.getGameState().equals(GameStatus.X_WON)) {
             creatorScore++;
-            board = new Board();
         } else if (board.getGameState().equals(GameStatus.O_WON)) {
             joinedScore++;
-            board = new Board();
+        } else if (board.getGameState().equals(GameStatus.DRAW)) {
         }
+    }
+    
+    public GameStatus getGameStatus(){
+        return board.getGameState();
+    }
+
+    public void newBoard() {
+        board = new Board();
     }
 
     public Board getBoard() {
