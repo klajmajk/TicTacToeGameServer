@@ -11,5 +11,5 @@ package se.kth.id2212.project.gameserver.network;
  * @author Adam
  */
 public enum ResponseStatus {
-    OK, GAME_SESSION, LIST
+    OK, GAME_SESSION, LIST, HIGH_SCORES
 }

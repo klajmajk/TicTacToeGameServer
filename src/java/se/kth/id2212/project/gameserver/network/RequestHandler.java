@@ -8,23 +8,23 @@ package se.kth.id2212.project.gameserver.network;
 import se.kth.id2212.project.gameserver.GameBean;
 import se.kth.id2212.project.gameserver.entities.GameSession;
 import se.kth.id2212.project.gameserver.entities.Player;
+import se.kth.id2212.project.gameserver.entities.Score;
 
 /**
  *
  * @author Adam
  */
 public class RequestHandler {
+
     private GameBean gameBean;
 
     public RequestHandler(GameBean gameBean) {
         this.gameBean = gameBean;
     }
-    
-    
 
     public Response handleRequest(Request req) {
         Response resp = null;
-        System.out.println("Received request: "+req);
+        System.out.println("Received request: " + req);
         switch (req.getStatus()) {
             case NEW_GAME:
                 resp = handleNewGame(req);
@@ -47,8 +47,9 @@ public class RequestHandler {
             case NEW_BOARD:
                 resp = handleNewBoard(req);
                 break;
-                
-                
+            case HIGH_SCORES:
+                resp = handleHighscores(req);
+                break;
 
         }
         return resp;
@@ -56,7 +57,8 @@ public class RequestHandler {
     }
 
     private Response handleListGames(Request req) {
-        return new Response(ResponseStatus.LIST, gameBean.getGamesList());
+        System.out.println("Handler call getgameList");
+        return new Response(ResponseStatus.LIST, gameBean.getGamesList(), null);
     }
 
     private Response handleMove(Request req) {
@@ -65,12 +67,12 @@ public class RequestHandler {
     }
 
     private Response handleJoinGame(Request req) {
-        gameBean.joinGame(req.getGameId(), new Player(req.getPlayerId()));
+        gameBean.joinGame(req.getGameId(), req.getPlayer());
         return new Response(ResponseStatus.GAME_SESSION, gameBean.getGameSessionById(req.getGameId()));
     }
 
     private Response handleNewGame(Request req) {
-        GameSession game = gameBean.startNewGame(req.getName(), new Player(req.getPlayerId()));
+        GameSession game = gameBean.startNewGame(req.getName(), req.getPlayer());
         return new Response(ResponseStatus.GAME_SESSION, game);
     }
 
@@ -83,7 +85,11 @@ public class RequestHandler {
         return new Response(ResponseStatus.OK);
     }
 
-    private Response handleNewBoard(Request req) {        
+    private Response handleNewBoard(Request req) {
         return new Response(ResponseStatus.GAME_SESSION, gameBean.newBoard(req.getGameId(), req.getPlayerId()));
+    }
+
+    private Response handleHighscores(Request req) {
+        return new Response(ResponseStatus.HIGH_SCORES, null, gameBean.getHighScores());
     }
 }

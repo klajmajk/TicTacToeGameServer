@@ -43,10 +43,12 @@ package se.kth.id2212.project.gameserver;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.Singleton;
-import se.kth.id2212.project.gameserver.entities.Board;
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.Stateless;
 import se.kth.id2212.project.gameserver.entities.GameSession;
 import se.kth.id2212.project.gameserver.entities.Player;
+import se.kth.id2212.project.gameserver.entities.Score;
 import se.kth.id2212.project.gameserver.network.Request;
 import se.kth.id2212.project.gameserver.network.RequestHandler;
 import se.kth.id2212.project.gameserver.network.Response;
@@ -58,74 +60,94 @@ import se.kth.id2212.project.gameserver.utilities.GCMHandler;
  *
  * @author mkuchtiak
  */
-@Singleton
+@Stateless
 public class GameBean {
 
-    private List<GameSession> gameSessions;
+    @EJB
+    private Database database;
+    @EJB
+    private AllGamesBean allGamesBean;
     private RequestHandler reqHandler;
 
+    //@Override
     public List<GameSession> getGamesList() {
-        System.out.println("Get game list");
-        return gameSessions;
+        System.out.println("GameBean Get game list");
+
+        return getAvailableGames(allGamesBean.getGamesList());
     }
 
-    public GameSession startNewGame(String name, Player player) {
-        if (gameSessions == null) {
-            gameSessions = new ArrayList<GameSession>();
+    private List<GameSession> getAvailableGames(List<GameSession> gameSessions) {
+        List<GameSession> availableGames = new ArrayList<GameSession>();
+        if (gameSessions != null) {
+            for (GameSession gameSession : gameSessions) {
+                if (gameSession.getJoined() == null) {
+                    availableGames.add(gameSession);
+                }
+            }
         }
-        GameSession game = new GameSession(gameSessions.size(), name, player);
+        return availableGames;
+    }
+
+    //@Override
+    public GameSession startNewGame(String name, Player player) {        
+        database.initPlayer(player);
+        GameSession game = allGamesBean.startNewGame(name, player);
         System.out.println("Start new game" + game);
-        gameSessions.add(game);
         return game;
     }
 
     public void joinGame(int gameId, Player player) {
-        GameSession game = getGameSessionById(gameId);
+        GameSession game = allGamesBean.getGameSessionById(gameId);
+        database.initPlayer(player);
+        game.setJoined(player);
         System.out.println("Join game" + game);
         //TODO if game destroyed in meantime null pointer exception here
-        game.setJoined(player);
         GCMHandler.sendGMC(game.getCreator());
     }
 
     public void handleMove(int gameId, int x, int y, String playerId) {
-        getGameSessionById(gameId).move(new Player(playerId), x, y);
-        GCMHandler.sendGMC(getGameSessionById(gameId).getPlayerWhoseTurn());
+        GameSession game = allGamesBean.getGameSessionById(gameId);
+        game.move(allGamesBean.getPlayerById(playerId), x, y);
+        GCMHandler.sendGMC(game.getPlayerWhoseTurn());
+        System.out.println("Sending refresh to " + game.getPlayerWhoseTurn());
     }
 
-    public GameSession getGameSessionById(int id) {
-        for (GameSession gameSession : gameSessions) {
-            if (gameSession.getId() == id) {
-                return gameSession;
-            }
-        }
-        return null;
-    }
-
+   
     public GameSession refreshGame(int gameId) {
 
-        GameSession game = getGameSessionById(gameId);
+        GameSession game = allGamesBean.getGameSessionById(gameId);
         return game;
     }
 
     public Response handleRequest(Request req) {
+        
+        System.out.println("Requst in GameBean");
         if (reqHandler == null) {
             reqHandler = new RequestHandler(this);
         }
         return reqHandler.handleRequest(req);
     }
 
+    //@Override
     public void dropGame(int gameId) {
-        GameSession game = getGameSessionById(gameId);
-        gameSessions.remove(game);
+        allGamesBean.dropGame(gameId);
     }
 
+    //@Override
     public GameSession newBoard(int gameId, String playerId) {
-        GameSession game = getGameSessionById(gameId);
-        game.newBoard();
+        GameSession game = allGamesBean.newBoard(gameId, playerId);
         GCMHandler.sendGMC(game.getJoined());
         GCMHandler.sendGMC(game.getCreator());
 
         return game;
+    }
+
+    public List<Score> getHighScores() {
+        return database.getScores();
+    }
+
+    public GameSession getGameSessionById(int id) {
+        return allGamesBean.getGameSessionById(id);
     }
 
 }

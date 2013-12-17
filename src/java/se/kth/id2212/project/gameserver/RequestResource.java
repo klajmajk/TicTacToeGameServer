@@ -7,7 +7,8 @@
 package se.kth.id2212.project.gameserver;
 
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
+import javax.faces.bean.RequestScoped;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -22,13 +23,11 @@ import se.kth.id2212.project.gameserver.utilities.Serializer;
  * @author Adam
  */
 @Path("request")
-@Singleton
+@RequestScoped
 public class RequestResource {
     
     @EJB
     private GameBean gameBean;
-
-
     /**
      * Creates a new instance of NewGameResource
      */
@@ -43,6 +42,7 @@ public class RequestResource {
     @PUT
     @Consumes("text/plain")
     public String putRequest(String content) {
+        System.out.println("Requst in RequestResource");
         Request req = Parser.getRequest(content);
         Response resp = gameBean.handleRequest(req);
         return Serializer.getResponse(resp);

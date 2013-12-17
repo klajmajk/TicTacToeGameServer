@@ -6,10 +6,12 @@
 
 package se.kth.id2212.project.gameserver.network;
 
+import se.kth.id2212.project.gameserver.entities.Player;
 import se.kth.id2212.project.gameserver.entities.Point;
 
 
 /**
+ *	This is our network protocol request
  *
  * @author Adam
  */
@@ -19,30 +21,25 @@ public class Request {
     private int gameId;
     private Point move;
     private String name;
+    private Player player;
 
     /**
-     * this constructor is for status JOIN_GAME and REFRESH
+     * this constructor is for status JOIN_GAME
      * 
-     * @param status
-     * @param playerId
-     * @param gameId 
      */
-    public Request(RequestStatus status, String playerId, int gameId) {
+    public Request(RequestStatus status, Player player, int gameId) {
         this.status = status;
-        this.playerId = playerId;
+        this.player = player;
         this.gameId = gameId;
        
     }
 
     /**
      * this constructor is for status  NEW_GAME
-     * @param status
-     * @param playerId
-     * @param name 
      */
-    public Request(RequestStatus status, String playerId, String name) {
+    public Request(RequestStatus status, Player player, String name) {
         this.status = status;
-        this.playerId = playerId;
+        this.player = player;
         this.name = name;
     }
     
@@ -71,8 +68,16 @@ public class Request {
     }
     
     
+    /**
+     *  Contructor for DROP_GAME
+     *  
+     */
+    public Request(RequestStatus status, int gameId) {
+        this.status = status;
+        this.gameId = gameId;
+	}
 
-    public RequestStatus getStatus() {
+	public RequestStatus getStatus() {
         return status;
     }
 
@@ -88,16 +93,13 @@ public class Request {
         return move;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String toString() {
-        return "Request{" + "status=" + status + ", playerId=" + playerId + ", gameId=" + gameId + ", move=" + move + ", name=" + name + '}';
+    public Player getPlayer() {
+        return player;
     }
     
-    
+    public String getName(){
+        return this.name;
+    }
     
     
 }

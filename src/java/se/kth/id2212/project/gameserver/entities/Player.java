@@ -6,21 +6,38 @@
 
 package se.kth.id2212.project.gameserver.entities;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 
 /**
 *
 * @author Adam
 */
+@Entity
 public class Player {
-    String GCMId;
+    @Id
+    private String GCMId;
+    private String name;
 
-    public Player(String GCMId) {
-        this.GCMId = GCMId;
+    public Player() {
     }
+    
+    
 
-    public String getGCMId() {
-        return GCMId;
-    }
+    public Player(String gCMId, String name) {
+		super();
+		GCMId = gCMId;
+		this.name = name;
+	}
+
+	public String getGCMId() {
+            return GCMId;
+        }	
+
+	public String getName() {
+		return name;
+	}
 
 	@Override
 	public int hashCode() {
@@ -49,7 +66,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player{" + "GCMId=" + GCMId + '}';
+        return "Player{" + "GCMId=" + GCMId + ", name=" + name + '}';
     }
         
         

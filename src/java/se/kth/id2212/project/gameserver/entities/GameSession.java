@@ -127,4 +127,14 @@ public class GameSession {
         this.playerWhoseTurn = playerWhoseTurn;
     }
 
+    public int getCreatorScore() {
+        return creatorScore;
+    }
+
+    public int getJoinedScore() {
+        return joinedScore;
+    }
+    
+    
+
 }

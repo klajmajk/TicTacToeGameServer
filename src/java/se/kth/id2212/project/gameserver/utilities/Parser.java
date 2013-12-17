@@ -16,11 +16,6 @@ import se.kth.id2212.project.gameserver.network.Request;
  */
 public class Parser {
 
-
-    public static Player getPlayer(String content) {
-        return new Player(content);
-    }
-
    
 
     public static GameSession getNewGame(String content) {        

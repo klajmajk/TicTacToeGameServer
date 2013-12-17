@@ -11,5 +11,5 @@ package se.kth.id2212.project.gameserver.network;
  * @author Adam
  */
 public enum RequestStatus {
-    NEW_GAME, JOIN_GAME, MOVE, LIST_GAMES, REFRESH, DROP_GAME, NEW_BOARD
+    NEW_GAME, JOIN_GAME, MOVE, LIST_GAMES, REFRESH, DROP_GAME, NEW_BOARD, HIGH_SCORES
 }
