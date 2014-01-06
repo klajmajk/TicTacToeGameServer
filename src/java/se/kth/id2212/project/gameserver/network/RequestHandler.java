@@ -7,11 +7,10 @@ package se.kth.id2212.project.gameserver.network;
 
 import se.kth.id2212.project.gameserver.GameBean;
 import se.kth.id2212.project.gameserver.entities.GameSession;
-import se.kth.id2212.project.gameserver.entities.Player;
-import se.kth.id2212.project.gameserver.entities.Score;
 
 /**
- *
+ * This class handles all requests and returns appropriate responses
+ * 
  * @author Adam
  */
 public class RequestHandler {
@@ -22,6 +21,11 @@ public class RequestHandler {
         this.gameBean = gameBean;
     }
 
+    /**
+     * Main handeling method
+     * @param req request
+     * @return Response
+     */
     public Response handleRequest(Request req) {
         Response resp = null;
         System.out.println("Received request: " + req);
@@ -56,6 +60,7 @@ public class RequestHandler {
 
     }
 
+    
     private Response handleListGames(Request req) {
         System.out.println("Handler call getgameList");
         return new Response(ResponseStatus.LIST, gameBean.getGamesList(), null);

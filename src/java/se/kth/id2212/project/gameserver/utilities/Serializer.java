@@ -13,19 +13,10 @@ import se.kth.id2212.project.gameserver.entities.GameSession;
 import se.kth.id2212.project.gameserver.network.Response;
 
 /**
- *
+ * Handles serialization of responses
  * @author Adam
  */
-public class Serializer {
-
-    public static String getBoard(Board board) {
-               
-        return serialize(board);
-    }
-
-    public static String getGamesList(List<GameSession> gamesList) {        
-        return serialize(gamesList);
-    }
+public class Serializer {      
     
     private static String serialize(Object o){
         Gson gson = new Gson();
@@ -33,12 +24,8 @@ public class Serializer {
         return json;
     }
 
-    public static String getGameSession(GameSession game) {
-        return serialize(game);
-    }
 
-    public static String getResponse(Response resp) {
-        
+    public static String getResponse(Response resp) {        
         return serialize(resp);
     }
 

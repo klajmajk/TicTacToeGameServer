@@ -7,11 +7,10 @@ package se.kth.id2212.project.gameserver.utilities;
 
 import com.google.gson.Gson;
 import se.kth.id2212.project.gameserver.entities.GameSession;
-import se.kth.id2212.project.gameserver.entities.Player;
 import se.kth.id2212.project.gameserver.network.Request;
 
 /**
- *
+ * Handles parsing of network requests
  * @author Adam
  */
 public class Parser {

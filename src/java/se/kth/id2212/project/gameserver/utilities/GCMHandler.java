@@ -18,10 +18,14 @@ import se.kth.id2212.project.gameserver.GameBean;
 import se.kth.id2212.project.gameserver.entities.Player;
 
 /**
- *
+ * Used for sending refresh queries to clients through GCM
  * @author Adam
  */
 public class GCMHandler {
+    /**
+     * Sends the request to refresh to a player
+     * @param player which should refresh
+     */
     public static void sendGMC(Player player){
         
         try {

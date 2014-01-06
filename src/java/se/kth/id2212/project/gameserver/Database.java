@@ -15,7 +15,7 @@ import se.kth.id2212.project.gameserver.entities.Player;
 import se.kth.id2212.project.gameserver.entities.Score;
 
 /**
- *
+ * Database interaction class using JPA
  * @author Adam
  */
 @Stateless 
@@ -23,8 +23,10 @@ public class Database {
     @PersistenceContext
     EntityManager em;
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    /**
+     * Initializes the player in database
+     * @param player 
+     */
     public void initPlayer(Player player){
         
         Score score = em.find(Score.class, player.getGCMId());
@@ -32,13 +34,23 @@ public class Database {
             em.persist(new Score(player, 0));
         }
     }
-    
+    /**
+     * Increments the score of a player
+     * 
+     * @param player player whose score should be incremented
+     * @param increment the increment of the score
+     */
     public void incrementScore(Player player, long increment){
         Score score = em.find(Score.class, player.getGCMId());
         score.setScore(score.getScore() + increment);
         em.merge(score);
     }
     
+    
+    /**
+     * 
+     * @return all scores of all players
+     */
     public List<Score> getScores(){
         Query query = em.createQuery("SELECT s FROM Score s ORDER BY s.score DESC");
         return query.getResultList();

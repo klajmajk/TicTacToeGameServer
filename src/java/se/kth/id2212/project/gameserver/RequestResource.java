@@ -18,7 +18,7 @@ import se.kth.id2212.project.gameserver.utilities.Parser;
 import se.kth.id2212.project.gameserver.utilities.Serializer;
 
 /**
- * REST Web Service
+ * REST Web Service handeling requests and returning responses.
  *
  * @author Adam
  */

@@ -14,7 +14,8 @@ import se.kth.id2212.project.gameserver.entities.GameSession;
 import se.kth.id2212.project.gameserver.entities.Player;
 
 /**
- *
+ * This class is handeling interactions common to all GameSessions
+ * 
  * @author Adam
  */
 @Singleton

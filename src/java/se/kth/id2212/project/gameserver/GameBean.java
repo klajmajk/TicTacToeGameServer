@@ -44,7 +44,6 @@ package se.kth.id2212.project.gameserver;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.ejb.Lock;
 import javax.ejb.Stateless;
 import se.kth.id2212.project.gameserver.entities.GameSession;
 import se.kth.id2212.project.gameserver.entities.Player;
@@ -55,10 +54,9 @@ import se.kth.id2212.project.gameserver.network.Response;
 import se.kth.id2212.project.gameserver.utilities.GCMHandler;
 
 /**
- * Singleton session bean used to store the name parameter for "/helloWorld"
- * resource
+ * Stateless bean handeling each game request
  *
- * @author mkuchtiak
+ * @author Adam
  */
 @Stateless
 public class GameBean {
@@ -69,13 +67,22 @@ public class GameBean {
     private AllGamesBean allGamesBean;
     private RequestHandler reqHandler;
 
-    //@Override
+    /**
+     * 
+     * @return all game sessions
+     */
     public List<GameSession> getGamesList() {
         System.out.println("GameBean Get game list");
 
         return getAvailableGames(allGamesBean.getGamesList());
     }
 
+    
+    /**
+     * Returns the available game sessions. (The ones where there is no joined player)
+     * @param gameSessions all game sessions
+     * @return available game session
+     */
     private List<GameSession> getAvailableGames(List<GameSession> gameSessions) {
         List<GameSession> availableGames = new ArrayList<GameSession>();
         if (gameSessions != null) {
@@ -88,7 +95,13 @@ public class GameBean {
         return availableGames;
     }
 
-    //@Override
+    /**
+     * Starts a new game session
+     * 
+     * @param name of session
+     * @param player starting session
+     * @return the instance of new gameSession
+     */
     public GameSession startNewGame(String name, Player player) {        
         database.initPlayer(player);
         GameSession game = allGamesBean.startNewGame(name, player);
@@ -96,6 +109,12 @@ public class GameBean {
         return game;
     }
 
+    /**
+     * Joining already running game session
+     * 
+     * @param gameId of the joined session
+     * @param player joining the session
+     */
     public void joinGame(int gameId, Player player) {
         GameSession game = allGamesBean.getGameSessionById(gameId);
         database.initPlayer(player);
@@ -105,6 +124,14 @@ public class GameBean {
         GCMHandler.sendGMC(game.getCreator());
     }
 
+    /**
+     * Handles move of a game
+     * 
+     * @param gameId identifying a game
+     * @param x coordinate
+     * @param y coordinate
+     * @param playerId who plays 
+     */
     public void handleMove(int gameId, int x, int y, String playerId) {
         GameSession game = allGamesBean.getGameSessionById(gameId);
         game.move(allGamesBean.getPlayerById(playerId), x, y);
@@ -112,13 +139,22 @@ public class GameBean {
         System.out.println("Sending refresh to " + game.getPlayerWhoseTurn());
     }
 
-   
+   /**
+    * Called when client refreshes a game
+    * @param gameId the game id to be refreshed
+    * @return game session state
+    */
     public GameSession refreshGame(int gameId) {
 
         GameSession game = allGamesBean.getGameSessionById(gameId);
         return game;
     }
 
+    /**
+     * Handles clients requests
+     * @param req request to handle
+     * @return the response
+     */
     public Response handleRequest(Request req) {
         
         System.out.println("Requst in GameBean");
@@ -128,12 +164,22 @@ public class GameBean {
         return reqHandler.handleRequest(req);
     }
 
-    //@Override
+    /**
+     * Dropping the game prom the server
+     * 
+     * @param gameId game to drop
+     */
     public void dropGame(int gameId) {
         allGamesBean.dropGame(gameId);
     }
 
-    //@Override
+    /**
+     * Creats a new board in a game
+     * 
+     * @param gameId 
+     * @param playerId
+     * @return game session with the new board
+     */
     public GameSession newBoard(int gameId, String playerId) {
         GameSession game = allGamesBean.newBoard(gameId, playerId);
         GCMHandler.sendGMC(game.getJoined());
@@ -142,10 +188,19 @@ public class GameBean {
         return game;
     }
 
+    /**
+     * 
+     * @return the highscores
+     */
     public List<Score> getHighScores() {
         return database.getScores();
     }
 
+    /**
+     * 
+     * @param id of the game session
+     * @return the gameSession
+     */
     public GameSession getGameSessionById(int id) {
         return allGamesBean.getGameSessionById(id);
     }
