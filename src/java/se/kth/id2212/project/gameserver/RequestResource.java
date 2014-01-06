@@ -28,16 +28,13 @@ public class RequestResource {
     
     @EJB
     private GameBean gameBean;
-    /**
-     * Creates a new instance of NewGameResource
-     */
     public RequestResource() {
     
     }
     /**
-     * PUT method for updating or creating an instance of NewGameResource
-     * @param content representation for the resource
-     * @return an HTTP response with content of the updated or created resource.
+     * PUT method for maing a request on the serve
+     * @param content the request body
+     * @return the response
      */
     @PUT
     @Consumes("text/plain")
